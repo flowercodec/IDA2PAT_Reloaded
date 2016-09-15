@@ -1,0 +1,1 @@
+copy idasdk to this folder
