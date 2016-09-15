@@ -1,8 +1,6 @@
 
 #pragma once
 
-#define _lint
-
 #if defined(__NT__)
 	#define WIN32_LEAN_AND_MEAN
 	#define WINVER       0x0502 // WinXP++    
@@ -16,6 +14,7 @@
 	#define EXPORT
 #elif defined(__MAC__)
 	#define EXPORT __attribute__((visibility("default")))
+	#define _lint
 #endif
 
 #include <stdint.h>
