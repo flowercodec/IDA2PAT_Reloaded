@@ -10,8 +10,8 @@
 	#include <time.h>
 	#include <conio.h>
 	#include <shlwapi.h>
-
 	#define EXPORT
+	//#define _lint
 #elif defined(__MAC__)
 	#define EXPORT __attribute__((visibility("default")))
 	#define _lint
