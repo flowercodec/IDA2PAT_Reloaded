@@ -1,2 +1,3 @@
 # IDA2PAT_Reloaded
-IDA2PAT_Reloaded for windows and mac osx
+port IDA2PAT_Reloaded to mac osx
+support windows and mac osx
