@@ -1,3 +1,5 @@
-# IDA2PAT_Reloaded
+## IDA2PAT_Reloaded
 port IDA2PAT_Reloaded to mac osx
-support windows and mac osx
+
+## features
+* support windows and mac osx
