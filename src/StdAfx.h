@@ -13,8 +13,9 @@
 	#include <conio.h>
 	#include <shlwapi.h>
 
+	#define EXPORT
 #elif defined(__MAC__)
-
+	#define EXPORT __attribute__((visibility("default")))
 #endif
 
 #include <stdint.h>

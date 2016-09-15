@@ -1,23 +1,31 @@
-files=Main.o Core.o Utility.o
+files=../src/Main.o ../src/Core.o ../src/Utility.o
 
 include=-I ../src -I ../idasdk/include
-
-libs=-framework IOKit -framework AppKit -msse2 ../idasdk/lib/
+libs=-framework IOKit -framework AppKit -msse2
 
 CC=g++
 strip=strip
 
-CFLAGS=-DNDEBUG -O3 -fno-rtti -fvisibility=hidden -stdlib=libstdc++ -mmacosx-version-min=10.7 -arch i686
-IDA64: -DNDEBUG -O3 -fno-rtti -fvisibility=hidden -stdlib=libstdc++ -mmacosx-version-min=10.7
+CFLAGS=-DNDEBUG -D__MAC__ -O3 -fno-rtti -fvisibility=hidden -stdlib=libstdc++ -mmacosx-version-min=10.7
 
+ifeq ($(MAKECMDGOALS),IDA32)   
+CFLAGS+= -arch i686
+libs+= ../idasdk/ida_mac_dylib/libida.dylib
+else ifeq ($(MAKECMDGOALS), IDA64)
+libs+= ../idasdk/ida_mac_dylib/libida.dylib
+endif
+
+all:
+	@echo "make IDA64 or make IDA32"
+	
 %.o: %.cpp
 	$(CC) $(CFLAGS) $(include) -c $< -o $@ 2>> build.log	
 
-IDA2PAT_Reloaded.pmc:$(files) Makefile
+IDA32:clean $(files) Makefile
 	$(CC) -dynamiclib $(CFLAGS) -install_name "@executable_path/IDA2PAT_Reloaded.pmc" $(include) $(files) $(libs) -o IDA2PAT_Reloaded.pmc 2>> build.log
 	$(strip) -x IDA2PAT_Reloaded.pmc
-IDA64:$(files) Makefile
-	$(CC) -dynamiclib $(CFLAGS) -install_name "@executable_path/IDA2PAT_Reloaded.pmc" $(include) $(files) $(libs) -o IDA2PAT_Reloaded.pmc 2>> build.log
-	$(strip) -x IDA2PAT_Reloaded.pmc
+IDA64:clean $(files) Makefile
+	$(CC) -dynamiclib $(CFLAGS) -install_name "@executable_path/IDA2PAT_Reloaded.pmc64" $(include) $(files) $(libs) -o IDA2PAT_Reloaded.pmc64 2>> build.log
+	$(strip) -x IDA2PAT_Reloaded.pmc64
 clean:
-	rm -f $(files) *.a *.pmc build.log
+	rm -f $(files) *.a *.pmc *.pmc64 build.log

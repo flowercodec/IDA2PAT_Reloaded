@@ -146,13 +146,10 @@ bool FileExists(char* path)
 #if defined(__NT__)
 	return PathFileExistsA(path);
 #elif defined(__MAC__)
-	int res = access(path, R_OK);
-	if (res < 0) {
-		if (errno == ENOENT) {
-			return false;
-		} else {
-			return true;
-		}
+	if( access( path, F_OK ) != -1 ) {
+		return true;
+	} else {
+		return false;
 	}
 #endif
 }

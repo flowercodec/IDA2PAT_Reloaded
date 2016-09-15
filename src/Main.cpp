@@ -24,7 +24,7 @@ char IDAP_name[] 	= "IDA2PAT Reloaded";
 char IDAP_hotkey[] 	= "F11"; // Preferred hotkey
 
 // Plug-in description block
-extern "C" ALIGN(32) ida_export_data plugin_t PLUGIN =
+extern "C" ALIGN(32) EXPORT plugin_t PLUGIN =
 {
 	IDP_INTERFACE_VERSION,	// IDA version plug-in is written for
 	
