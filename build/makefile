@@ -9,10 +9,10 @@ strip=strip
 CFLAGS=-DNDEBUG -D__MAC__ -O3 -fno-rtti -fvisibility=hidden -stdlib=libstdc++ -mmacosx-version-min=10.7 -arch i686
 
 ifeq ($(MAKECMDGOALS),IDA32)   
-libs+= ../idasdk/ida_mac_dylib/libida.dylib
+libs+= ../idasdk/ida_dll/libida.dylib
 else ifeq ($(MAKECMDGOALS), IDA64)
 CFLAGS+= -D__EA64__
-libs+= ../idasdk/ida_mac_dylib/libida.dylib
+libs+= ../idasdk/ida_dll/libida.dylib
 endif
 
 all:
