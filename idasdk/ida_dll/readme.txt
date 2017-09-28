@@ -1,1 +1,1 @@
-folder for libida.so/dylib
+copy libida64.dylib to this folder
