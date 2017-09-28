@@ -31,6 +31,7 @@ static bool get_true_name(ea_t from, ea_t ea, char *buf, size_t bufsize)
 	}
 
 	qstrncpy(buf, name.c_str(), name.size());
+	return true;
 }
 
 
