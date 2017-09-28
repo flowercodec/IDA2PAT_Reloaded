@@ -11,7 +11,7 @@
 // === Function Prototypes ===
 int idaapi IDAP_init();
 void idaapi IDAP_term();
-void idaapi IDAP_run(int arg);
+bool idaapi IDAP_run(size_t arg);
 extern void CORE_Init();
 extern void CORE_Process(int iArg);
 extern void CORE_Exit();
@@ -24,7 +24,7 @@ char IDAP_name[] 	= "IDA2PAT Reloaded";
 char IDAP_hotkey[] 	= "F11"; // Preferred hotkey
 
 // Plug-in description block
-extern "C" ALIGN(32) EXPORT plugin_t PLUGIN =
+extern "C" EXPORT plugin_t PLUGIN =
 {
 	IDP_INTERFACE_VERSION,	// IDA version plug-in is written for
 	
@@ -52,9 +52,10 @@ void idaapi IDAP_term()
 }
 
 // Run 
-void idaapi IDAP_run(int iArg)
+bool idaapi IDAP_run(size_t iArg)
 {	
     CORE_Process(iArg);   
+	return true;
 }
 
 

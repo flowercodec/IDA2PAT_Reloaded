@@ -5,8 +5,8 @@ port IDA2PAT_Reloaded to mac osx
 * support windows, mac osx, include IDA32, IDA64
 
 #build
-Windows: MSVC2010
+Windows: MSVC2015
 
 Mac OSX: Xcode 7
 
-IDA SDK : 6.6
+IDA SDK : 7.0

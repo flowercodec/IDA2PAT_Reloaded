@@ -23,6 +23,16 @@ static const char* TimeString(TIMESTAMP Time);
 static uint32_t s_uPatterns = 0;
 static FILE *s_fp = NULL;
 
+static bool get_true_name(ea_t from, ea_t ea, char *buf, size_t bufsize)
+{
+	qstring name = get_name(ea);
+	if (name.empty()) {
+		return false;
+	}
+
+	qstrncpy(buf, name.c_str(), name.size());
+}
+
 
 // Initialize
 void CORE_Init()
@@ -41,17 +51,17 @@ void CORE_Process(int iArg)
 {
 	msg("\n== IDA2PAT-Reloaded plug-in: v: %s - %s, By Sirmabus, Port By Cherry ==\n", MY_VERSION, __DATE__);	
 
-	if(autoIsOk())
+	if(auto_is_ok())
 	{				
 		// Ask for pattern file name
 		char* pszFileName = NULL;
 		while(true)
 		{
-			if(pszFileName = askfile_c(1, "*.pat", "<IDS2PAT-Reloaded>:  Enter the save name for the pattern file:"))
+			if(pszFileName = ask_file(true, "*.pat", "<IDS2PAT-Reloaded>:  Enter the save name for the pattern file:"))
 			{
 				if(FileExists(pszFileName))
 				{
-					int iResult = askyn_c(-1, "Do you want to overwrite the existing file?");					
+					int iResult = ask_yn(-1, "Do you want to overwrite the existing file?");					
 					if(iResult == 0)
 						continue;
 					else
@@ -127,7 +137,7 @@ void CORE_Process(int iArg)
 // Checks and handles if break key pressed; returns TRUE on break.
 static bool CheckBreak()
 {
-	if(wasBreak()
+	if(user_cancelled()
 #ifdef __NT__
 	|| (GetAsyncKeyState(VK_PAUSE) & 0x8000)
 #endif
@@ -142,7 +152,7 @@ static bool CheckBreak()
 
 
 // Return TRUE if we should use a function reference by name
-static ALIGN(32) bool IsNameWanted(char* pszName)
+static bool IsNameWanted(char* pszName)
 {
 	// Function of interest?
 	// not "sub_.." or "unknown_libname_.."
@@ -183,27 +193,27 @@ static ALIGN(32) bool IsNameWanted(char* pszName)
 
 
 // Process a function
-static ALIGN(32) bool ProcessFuncion(func_t *pFunc)
+static bool ProcessFuncion(func_t *pFunc)
 {
 	// Reject small functions	
 	if(pFunc->size() >= MIN_FUNC_SIZE)
 	{	
 		// Get name
 		char szName[MAXNAMELEN + 1];
-		if(get_true_name(BADADDR, pFunc->startEA, szName, SIZESTR(szName)))
+		if(get_true_name(BADADDR, pFunc->start_ea, szName, SIZESTR(szName)))
 		{
 			// Testing stuff.. these just won't work consistently :-/
 			//if(pFunc->flags & FUNC_LIB)				
-			//if(getFlags(pFunc->startEA) & FUNC_LIB)				
-			//if(is_public_name(pFunc->startEA)) // ??6@YAAAVDbRowData_c@@AAV0@_N@Z			
+			//if(get_full_flags(pFunc->start_ea) & FUNC_LIB)				
+			//if(is_public_name(pFunc->start_ea)) // ??6@YAAAVDbRowData_c@@AAV0@_N@Z			
 			//if(dummy_name_ea(pszName) == BADADDR)
-			//	msg("%08X D: \"%s\".\n", pFunc->startEA, pszName);
+			//	msg("%08X D: \"%s\".\n", pFunc->start_ea, pszName);
 
 			// Filter function by name pattern
 			if(IsNameWanted(szName))
 			{
 				// Create a pattern for this function
-				MakeSig(pFunc->startEA, pFunc->endEA);
+				MakeSig(pFunc->start_ea, pFunc->end_ea);
 				s_uPatterns++;			
 			}
 		}	
@@ -228,10 +238,11 @@ static ALIGN(32) bool ProcessFuncion(func_t *pFunc)
 // ****************************************************************************
 inline ea_t FindRefLoc(ea_t item, ea_t _ref)
 {
-	if(isCode(getFlags(item)))
+	if(is_code(get_full_flags(item)))
 	{
-		ua_ana0(item);
-		if(cmd.Operands[0].type == o_near)
+		insn_t cmd;
+		decode_insn(&cmd, item);
+		if(cmd.ops[0].type == o_near)
 		{
 			// We have got a self-relative reference
 			_ref = (_ref - get_item_end(item));
@@ -240,7 +251,7 @@ inline ea_t FindRefLoc(ea_t item, ea_t _ref)
 
 	for(ea_t i = item; i <= (get_item_end(item) - 4); i++)
 	{
-		if(_ref == get_long(i))		
+		if(_ref == get_dword(i))		
 			return(i);		
 	}
 
@@ -271,7 +282,7 @@ static void MakeSig(ea_t startEA, ea_t endEA)
 	{		
 		// Load up the publics vector
 		// Does the current byte have non-trivial (non-dummy) name?
-		flags_t flags = getFlags(ea);
+		flags_t flags = get_full_flags(ea);
 		if(has_name(flags))
 		{
 			// Filter out auto-generated names that pass through
@@ -389,7 +400,7 @@ static void MakeSig(ea_t startEA, ea_t endEA)
 		if(get_true_name(BADADDR, (*r).second, szName, MAXNAMELEN))
 		{
 			int xoff = ((*r).first - startEA);
-			flags_t mflags = getFlags((*r).second);
+			flags_t mflags = get_full_flags((*r).second);
 
 			// Check for negative offset and adjust output
 			if(xoff >= 0)			

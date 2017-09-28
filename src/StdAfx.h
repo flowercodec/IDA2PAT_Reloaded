@@ -40,7 +40,7 @@
 #include <typeinf.hpp>
 #include <demangle.hpp>
 #include <err.h>
-
+#include <name.hpp>
 
 // STL
 #include <map>

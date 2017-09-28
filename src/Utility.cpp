@@ -17,7 +17,7 @@ namespace MacMarch {
 // Desc: Get elapsed factional seconds
 //
 // ****************************************************************************
-ALIGN(32) TIMESTAMP GetTimeStamp() 
+TIMESTAMP GetTimeStamp() 
 {
 #if defined(__NT__)
 	LARGE_INTEGER tLarge;
@@ -45,7 +45,7 @@ ALIGN(32) TIMESTAMP GetTimeStamp()
 // Desc: Send text to a log file.
 //
 // ****************************************************************************
-ALIGN(32) void Log(FILE *pLogFile, const char *format, ...)
+void Log(FILE *pLogFile, const char *format, ...)
 {
 	if(pLogFile && format)
 	{
@@ -64,7 +64,7 @@ ALIGN(32) void Log(FILE *pLogFile, const char *format, ...)
 }
 
 // Common hash type
-ALIGN(32) uint32_t DJBHash(const uint8_t *pData, int iSize)
+uint32_t DJBHash(const uint8_t *pData, int iSize)
 {
 	register uint32_t uHash = 5381;
 
@@ -81,7 +81,7 @@ ALIGN(32) uint32_t DJBHash(const uint8_t *pData, int iSize)
 // http://www.ccsinfo.com/forum/viewtopic.php?t=24977
 
 
-ALIGN(32) uint16_t GetCRC16(uint8_t* pData, int iLen)
+uint16_t GetCRC16(uint8_t* pData, int iLen)
 {
 	if(pData && iLen)
 	{
